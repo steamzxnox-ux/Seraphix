@@ -1,6 +1,6 @@
 # Seraphix
 
-A keyless Roblox script with a clean built-in UI. No executor key needed, just paste and run.
+A keyless Roblox script with a clean built-in UI. No executor key needed, just paste and execute.
 
 ## Features
 
