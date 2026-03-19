@@ -31,4 +31,4 @@ Paste the script into your executor and run it. No key required.
 
 ## Website
 
-[seraphixx.carrd.co](https://seraphixx.carrd.co)
+[https://seraphixx.vercel.app/)
