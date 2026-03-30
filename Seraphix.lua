@@ -738,3 +738,52 @@ RS.RenderStepped:Connect(function(dt)
         fpsDot.BackgroundColor3 = fps >= 55 and Color3.fromRGB(100,255,100) or fps >= 30 and Color3.fromRGB(255,200,50) or Color3.fromRGB(255,80,80)
     end
 end)
+
+-- =============================================
+-- CAR SPEED MODIFIER
+-- =============================================
+local CarSpeedEnabled = false
+local CarSpeedMult = 2
+local carConn = nil
+
+local function GetSeat()
+    local char = LP.Character
+    if not char then return nil end
+    local hrp = char:FindFirstChild("HumanoidRootPart")
+    if not hrp then return nil end
+    -- check if seated in a VehicleSeat
+    local hum = char:FindFirstChildOfClass("Humanoid")
+    if hum and hum.SeatPart and hum.SeatPart:IsA("VehicleSeat") then
+        return hum.SeatPart
+    end
+    return nil
+end
+
+local function ToggleCarSpeed(e)
+    CarSpeedEnabled = e
+    if carConn then carConn:Disconnect() carConn = nil end
+    if not e then
+        local seat = GetSeat()
+        if seat then seat.MaxSpeed = 100 end
+        return
+    end
+    carConn = RS.Heartbeat:Connect(function()
+        local seat = GetSeat()
+        if not seat then return end
+        local root = seat.AssemblyRootPart or seat
+        if not root or not root:IsA("BasePart") then return end
+        seat.MaxSpeed = 1e6 -- uncap it entirely
+        if seat.ThrottleFloat ~= 0 then
+            local dir = (seat.CFrame.LookVector * seat.ThrottleFloat)
+            local speed = seat.ThrottleFloat > 0 and (CarSpeedMult * 100) or 50
+            root.AssemblyLinearVelocity = dir * speed
+        end
+    end)
+end
+
+-- add to Movement tab
+AddSection(MovementTab, "Vehicle")
+AddToggle(MovementTab, "Car Speed Boost", false, ToggleCarSpeed)
+AddSlider(MovementTab, "Speed Multiplier", 1, 50, 5, "x", function(v)
+    CarSpeedMult = v
+end)
